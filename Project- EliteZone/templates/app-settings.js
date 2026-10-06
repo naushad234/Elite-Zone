@@ -3,7 +3,7 @@ const defaultSettings = {
     profileName: "Md Naushad",
     profileEmail: "admin@elitezone.com",
     avatarChar: "EZ",
-    themeColor: "linear-gradient(45deg, #c9db62, #e3b716)",
+    themeColor: "linear-gradient(135deg, #D4AF37, #F6E27A, #C9A227)",
     darkMode: true,
     cardAnimations: true,
     compactMode: false,
@@ -21,6 +21,9 @@ const defaultSettings = {
 let userSettings = JSON.parse(localStorage.getItem('elitezone_settings'));
 if (!userSettings) {
     userSettings = { ...defaultSettings };
+} else if ((userSettings.themeColor || '').toLowerCase().includes('#c9db62') || (userSettings.themeColor || '').includes('201, 219, 98')) {
+    userSettings.themeColor = defaultSettings.themeColor;
+    localStorage.setItem('elitezone_settings', JSON.stringify(userSettings));
 }
 
 function saveSettings() {
@@ -28,6 +31,7 @@ function saveSettings() {
 }
 
 function applySettings() {
+    const isGoldTheme = userSettings.themeColor.toLowerCase().includes('#d4af37');
     let styleEl = document.getElementById('dynamic-elite-styles');
     if (!styleEl) {
         styleEl = document.createElement('style');
@@ -50,13 +54,13 @@ function applySettings() {
             background: var(--accent) !important;
         }
         .avatar {
-            border-color: ${userSettings.themeColor.includes('c9db62') ? '#D4AF37' : userSettings.themeColor} !important;
-            color: ${userSettings.themeColor.includes('c9db62') ? '#D4AF37' : userSettings.themeColor} !important;
+            border-color: ${isGoldTheme ? '#D4AF37' : userSettings.themeColor} !important;
+            color: ${isGoldTheme ? '#D4AF37' : userSettings.themeColor} !important;
         }
         .logo {
-            background: ${userSettings.themeColor.includes('c9db62') ? 'linear-gradient(135deg, #D4AF37, #F6E27A, #C9A227)' : userSettings.themeColor} !important;
-            -webkit-background-clip: ${userSettings.themeColor.includes('c9db62') ? 'initial' : 'text'} !important;
-            color: ${userSettings.themeColor.includes('c9db62') ? 'black' : 'transparent'} !important;
+            background: ${isGoldTheme ? 'linear-gradient(135deg, #D4AF37, #F6E27A, #C9A227)' : userSettings.themeColor} !important;
+            -webkit-background-clip: ${isGoldTheme ? 'initial' : 'text'} !important;
+            color: ${isGoldTheme ? 'black' : 'transparent'} !important;
         }
     `;
 
@@ -208,9 +212,9 @@ function initMenuPage() {
     if (!document.querySelector('.cards')) return;
 
     // Welcome Banner Hide Logic
-    const marquee = document.querySelector('marquee');
-    if (marquee && !userSettings.showWelcomeBanner) {
-        marquee.style.display = 'none';
+    const welcomePanel = document.querySelector('.welcome-panel');
+    if (welcomePanel && !userSettings.showWelcomeBanner) {
+        welcomePanel.style.display = 'none';
         const pTags = document.querySelectorAll('.content p');
         if (pTags.length && pTags[0].innerText.includes('all-in-one')) pTags[0].style.display = 'none';
     }
